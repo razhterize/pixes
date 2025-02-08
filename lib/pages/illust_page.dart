@@ -1043,6 +1043,32 @@ class _BottomBarState extends State<_BottomBar> with TickerProviderStateMixin {
               onTap: () {
                 context.to(() => SearchResultPage(e.name));
               },
+              // TODO: Add Right Click Menu to Block Tags
+              onSecondaryTapUp: (detail) {
+                final contextMenuController = ContextMenuController();
+                if (!contextMenuController.isShown) {
+                  contextMenuController.show(
+                    context: context,
+                    contextMenuBuilder: (_) {
+                      return AdaptiveTextSelectionToolbar.buttonItems(
+                        anchors: TextSelectionToolbarAnchors(
+                            primaryAnchor: detail.globalPosition),
+                        buttonItems: [
+                          ContextMenuButtonItem(
+                            onPressed: () {
+                              setState(() =>
+                                  appdata.settings["blockTags"].add(e.name));
+                              appdata.writeData();
+                              contextMenuController.remove();
+                            },
+                            label: "Block ${e.name}".tl,
+                          )
+                        ],
+                      );
+                    },
+                  );
+                }
+              },
               child: Card(
                 padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
                 child: Text(
